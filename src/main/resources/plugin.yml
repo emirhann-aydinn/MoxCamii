@@ -1,0 +1,21 @@
+name: MoxCamii
+version: 2.1
+main: com.mox.MoxCamii.MoxCamii
+api-version: 1.13
+authors: [MoxNetwork]
+description: Premium Cami, Namaz ve Abdest Sistemi
+depend: [PlaceholderAPI]
+commands:
+  cami:
+    description: Cami sistemi ana komutu
+    aliases: [camii, mescid]
+  namazlar:
+    description: Namaz vakitlerini menüde gösterir
+    aliases: [vakitler]
+permissions:
+  moxcamii.admin:
+    description: Cami sistemi yönetici komutları erişimi.
+    default: op
+  moxcamii.sorgu:
+    description: Cami sorgu komutunu kullanma izni.
+    default: true

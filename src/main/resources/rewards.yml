@@ -1,0 +1,4 @@
+# src/main/resources/rewards.yml
+Rewards:
+  - "eco give {PLAYER} 1000"
+  - "give {PLAYER} diamond 1"

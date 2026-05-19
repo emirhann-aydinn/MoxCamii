@@ -1,0 +1,103 @@
+# =======================================================
+#    ███╗   ███╗ ██████╗ ██╗  ██╗ ██████╗ █████╗ ███╗   ███╗██╗██╗
+#    ████╗ ████║██╔═══██╗╚██╗██╔╝██╔════╝██╔══██╗████╗ ████║██║██║
+#    ██╔████╔██║██║   ██║ ╚███╔╝ ██║     ███████║██╔████╔██║██║██║
+#    ██║╚██╔╝██║██║   ██║ ██╔██╗ ██║     ██╔══██║██║╚██╔╝██║██║██║
+#    ██║ ╚═╝ ██║╚██████╔╝██╔╝ ██╗╚██████╗██║  ██║██║ ╚═╝ ██║██║██║
+#    ╚═╝     ╚═╝ ╚═════╝ ╚═╝  ╚═╝ ╚═════╝╚═╝  ╚═╝╚═╝     ╚═╝╚═╝╚═╝
+#
+# =======================================================
+
+Settings:
+  Prefix: "&#27ae60☪ &#2ebd68&lCamii &8» &7"
+  AbdestSuresiDakika: 10
+  DoorPushbackStrength: 1.5
+  RewardDelaySeconds: 5
+  SeatYOffset: -1.7
+
+Database:
+  # SQLite veya MySQL
+  Type: "SQLite"
+  Host: "127.0.0.1"
+  Port: 3306
+  Database: "moxnetwork"
+  Username: "root"
+  Password: "password"
+
+Redis:
+  Enabled: true
+  Host: "127.0.0.1"
+  Port: 6379
+  Password: ""
+  Cluster-ID: "mox-network"
+
+NamazIsimleri:
+  Imsak: "&#2980b9İmsak"
+  Gunes: "&#f1c40fGüneş"
+  Ogle: "&#f39c12Öğle"
+  Ikindi: "&#e67e22İkindi"
+  Aksam: "&#e74c3cAkşam"
+  Yatsi: "&#8e44adYatsı"
+
+GUI:
+  Title: "&#27ae60⛫ &8Namaz Vakitleri"
+  Size: 27
+  ItemName: "{VAKIT} &fVakti"
+  ItemLore:
+    - ""
+    - "&#198a44» &7Saat: &f{SAAT}"
+    - ""
+    - "&#f1c40f✦ &eCemaate katıl, sevabını katla!"
+  Heads:
+    Imsak: "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMzg4N2VkNmU3NzgzYzhkZDlmZGM0MjVjZjJmNzIyMjViZDU0OWEzYzUyMThiMjRiNDlkMDc3YWU5NTBkNGZlIn19fQ=="
+    Gunes: "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMTJlNmU2ZTE2NTBjZjE2MDFjYTE5ZjVjNWUyMDFlNjIyN2RmNzVlZDlmMmU5OTdmNDRiOTMzNDZiYmFiNjUifX19"
+    Ogle: "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMTJlNmU2ZTE2NTBjZjE2MDFjYTE5ZjVjNWUyMDFlNjIyN2RmNzVlZDlmMmU5OTdmNDRiOTMzNDZiYmFiNjUifX19"
+    Ikindi: "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMzI1NWRjODk2OTgyNTBjMThkMWEzZDA1ZjMzMTFlYmUyYWVlMjlkNmFiZWZiNGEzZDFjNTZlMTAxNDhkMWNmIn19fQ=="
+    Aksam: "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMzZhYzlmYjZkNDY2ZTM3ZTJiNWQ2NjMwNjJmNTE0ZmZkMzZiZWVmZWUwYTNkMDdkYTcwZGY0MzNjOGEyMDdmNiIn19fQ=="
+    Yatsi: "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYzk5ODU4NDg1OTc0NjdlNWVjYWM3MDkxNDM1MmNlODNjZWY0MWIzNTNhNWJmNTJiOGYzYWRhMWE0MmZhNTZjIn19fQ=="
+
+Messages:
+  Reloaded: "&#27ae60Eklenti yapılandırması başarıyla yenilendi."
+  DuyuruMesaji: "&#f1c40f[Camii] &7{VAKIT} namazına &e{DAKIKA} dakika &7kaldı."
+  EzanMesaji: "&#f1c40f[Camii] &a{VAKIT} ezanı okunuyor. Cemaat bekleniyor..."
+  NoWudu: "&#e74c3cAbdestsiz saf tutamazsınız."
+  WuduTakenTitle: "&#2980b9Abdest Alındı"
+  WuduTakenSubtitle: "&7Namaza hazırsınız."
+  AlreadyHasWudu: "&#e74c3cZaten abdestiniz bulunuyor."
+  WuduExpired: "&#e74c3cAbdestinizin süresi doldu."
+  Banned: "&#e74c3cCamiden uzaklaştırıldınız.\n&7Sebep: &f{REASON}"
+  DoorDeniedTitle: "&#e74c3cGiriş Reddedildi"
+  DoorDeniedSubtitle: "&7Lütfen önce abdest alın."
+  RewardGiven: "&#27ae60{VAKIT} namazını kıldınız. Ödülleriniz teslim edildi."
+  NotSitting: "&7Cami bölgesindesiniz ancak saf tutmadınız (Halıya tıklayın)."
+  SafJoined: "&#27ae60Safa katıldınız."
+  SafLeft: "&#e74c3cSaftan ayrıldınız."
+  ActionbarSitting: "&#27ae60Namaz kılıyorsunuz..."
+  TestTriggered: "&#27ae60{VAKIT} ezanı test amaçlı tetiklendi."
+  NoPermission: "&#e74c3cBu komutu kullanmak için yetkiye sahip değilsiniz."
+  WandGiven: "&#f1c40fCami alan seçici aracı verildi. Kısayol: &f/cami create"
+  DoorWandGiven: "&#2980b9Kapı alan seçici aracı verildi. Kısayol: &f/cami createdoor"
+  AbdestWandGiven: "&#27ae60Musluk belirleyici aracı verildi."
+  RegionCreated: "&#27ae60Cami alanı başarıyla oluşturuldu."
+  DoorCreated: "&#27ae60Cami kapısı alanı başarıyla oluşturuldu."
+  SpawnSet: "&#27ae60Cami başlangıç noktası ayarlandı."
+  TapAdded: "&#27ae60Musluk başarıyla eklendi."
+  TapRemoved: "&#e74c3cMusluk başarıyla kaldırıldı."
+
+  # --- KOMUTLAR ---
+  PlayerHelpHeader: "\n&#27ae60&lMoxCamii\n &7Aşağıdaki komutları kullanabilirsiniz:\n \n"
+  PlayerHelpSorgu: "  &#2ebd68/cami sorgu [oyuncu] &8- &7Cami verilerini gösterir."
+  PlayerHelpVakitler: "  &#2ebd68/cami vakitler &8- &7Güncel namaz vakitlerini gösterir."
+  PlayerHelpAdminTip: "\n  &8(Yönetici menüsü için: &f/cami admin&8)"
+  PlayerHelpFooter: "\n"
+
+  AdminHelpHeader: "\n&#e74c3c&lMoxCamii Yönetim\n \n"
+  AdminHelpFooter: "\n"
+
+  SorguHeader: "\n&#27ae60&lSorgu Detayları &8( &f{PLAYER} &8)\n \n"
+  SorguNamazCount: "  &7Kılınan Namaz: &#f1c40f{COUNT}"
+  SorguLastPrayer: "  &7Son Kılınan: &#f1c40f{LAST}"
+  SorguBanStatus: "  &7Durum: {BAN_STATUS}"
+  SorguBanned: "&#e74c3cYasaklı &8(&c{REASON}&8)"
+  SorguNotBanned: "&#27ae60Temiz"
+  SorguFooter: "\n"
