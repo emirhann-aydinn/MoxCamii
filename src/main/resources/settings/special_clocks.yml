@@ -1,0 +1,24 @@
+special_clocks:
+  clocks:
+    ramazan:
+      status: true
+      auto-enable: true # Hicri takvime göre ramazan başlayınca otomatik true olur
+      types:
+        ramazan_bayrami_namazi:
+          status: true
+          time: "07:00"
+          min-players: 1
+        teravih:
+          status: true
+          day: "Every"
+          time: "22:15"
+          min-players: 1
+
+    kurban_bayrami:
+      status: true
+      auto-enable: true
+      types:
+        kurban_bayrami_namazi:
+          status: true
+          time: "07:30"
+          min-players: 1

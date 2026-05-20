@@ -7,6 +7,8 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import java.util.List;
+
 public class CamiCommand implements CommandExecutor {
 
     private final MoxCamii plugin;
@@ -29,11 +31,11 @@ public class CamiCommand implements CommandExecutor {
         }
 
         if (args[0].equalsIgnoreCase("sorgu")) {
-            if (!p.hasPermission("moxcamii.sorgu")) {
-                p.sendMessage(ColorUtils.color(plugin.getConfig().getString("Settings.Prefix", "") + plugin.getConfig().getString("Messages.NoPermission")));
+            String perm = plugin.getPermissionManager() != null ? plugin.getPermissionManager().get("Sorgu", "moxcamii.sorgu") : "moxcamii.sorgu";
+            if (!p.hasPermission(perm)) {
+                p.sendMessage(ColorUtils.color(plugin.getConfig().getString("Settings.Prefix", "") + plugin.getMessagesConfig().getString("Messages.NoPermission", "&cYetkiniz yok.")));
                 return true;
             }
-            // Sadece /cami sorgu yazarsa kendini, isim yazarsa o oyuncuyu sorgular
             String target = (args.length > 1) ? args[1] : p.getName();
             plugin.getGuiManager().openSorguGUI(p, target);
             return true;
@@ -45,7 +47,7 @@ public class CamiCommand implements CommandExecutor {
         }
 
         if (args[0].equalsIgnoreCase("top")) {
-            plugin.getGuiManager().openTopGUI(p, "monthly");
+            plugin.getGuiManager().openTopGUI(p);
             return true;
         }
 
@@ -54,10 +56,17 @@ public class CamiCommand implements CommandExecutor {
     }
 
     private void sendPlayerHelp(Player p) {
-        for (String line : plugin.getConfig().getStringList("Messages.PlayerHelp")) {
+        List<String> helpLines = plugin.getMessagesConfig().getStringList("Commands.PlayerHelp");
+        if (helpLines == null || helpLines.isEmpty()) {
+            p.sendMessage(ColorUtils.color("&c(Hata) Commands.PlayerHelp listesi messages.yml dosyanızda bulunamadı!"));
+            return;
+        }
+        for (String line : helpLines) {
             p.sendMessage(ColorUtils.color(line));
         }
-        if (p.hasPermission("moxcamii.admin.*")) {
+
+        String adminPerm = plugin.getPermissionManager() != null ? plugin.getPermissionManager().get("Admin-Tumu", "moxcamii.admin.*") : "moxcamii.admin.*";
+        if (p.hasPermission(adminPerm)) {
             p.sendMessage(ColorUtils.color("  &8(Yönetici komutları için: &f/camiadmin&8)"));
         }
     }

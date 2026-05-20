@@ -1,0 +1,32 @@
+title: "&#27ae60⛫ &8Özel Namaz Vakitleri"
+size: 36
+pattern:
+  - "# # # # # # # # #"
+  - "# # @ # @ # @ # #"
+  - "# # # # # # # # #"
+  - "# # # # * # # # #"
+items:
+  "#":
+    material: BLACK_STAINED_GLASS_PANE
+    name: " "
+    lore: []
+  "@":
+    material: PAPER
+    name: "{OZEL_VAKIT} &fNamazı"
+    lore:
+      - ""
+      - "&#198a44» &7Durum: {STATUS}"
+      - "&#198a44» &7Saat: &f{OZEL_SAAT}"
+      - ""
+      - "&#f1c40f✦ &eCemaate katıl, sevabını katla!"
+  "*":
+    material: ARROW
+    name: "&fGeri Dön"
+    lore:
+      - ""
+      - "&#f1c40f✦ &eÖnceki sayfaya dönmek"
+      - "&eiçin tıkla."
+Heads:
+  Ramazan-Bayram: ""
+  Teravih: ""
+  kurban-Bayram: ""

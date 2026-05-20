@@ -1,0 +1,20 @@
+title: "&8Camiden Yasaklılar (Sayfa {PAGE})"
+size: 54
+pattern:
+  - "# # # # # # # # #"
+  - "# X X X X X X X #"
+  - "# X X X X X X X #"
+  - "# X X X X X X X #"
+  - "# # # # # # # # #"
+  - "# # B # # # N # #"
+items:
+  "#":
+    material: BLACK_STAINED_GLASS_PANE
+    name: " "
+    lore: []
+  "B":
+    material: ARROW
+    name: "&eÖnceki Sayfa"
+  "N":
+    material: ARROW
+    name: "&eSonraki Sayfa"

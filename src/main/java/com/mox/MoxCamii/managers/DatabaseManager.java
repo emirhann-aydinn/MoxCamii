@@ -65,7 +65,7 @@ public class DatabaseManager {
                     "uuid VARCHAR(36) PRIMARY KEY, name VARCHAR(16), " +
                     "imsak INT DEFAULT 0, gunes INT DEFAULT 0, ogle INT DEFAULT 0, ikindi INT DEFAULT 0, " +
                     "aksam INT DEFAULT 0, yatsi INT DEFAULT 0, teravih INT DEFAULT 0, bayram INT DEFAULT 0, " +
-                    "monthly_count INT DEFAULT 0, total_count INT DEFAULT 0, last_prayer VARCHAR(32) DEFAULT 'Yok');";
+                    "monthly_count INT DEFAULT 0, total_count INT DEFAULT 0, abdest_count INT DEFAULT 0, last_prayer VARCHAR(32) DEFAULT 'Yok');";
             try (PreparedStatement ps = conn.prepareStatement(usersTable)) { ps.executeUpdate(); }
 
             String bansTable = "CREATE TABLE IF NOT EXISTS " + prefix + "bans (" +
@@ -117,8 +117,10 @@ public class DatabaseManager {
                 stats.put("aksam", rs.getInt("aksam"));
                 stats.put("yatsi", rs.getInt("yatsi"));
                 stats.put("teravih", rs.getInt("teravih"));
+                stats.put("bayram", rs.getInt("bayram"));
                 stats.put("monthly", rs.getInt("monthly_count"));
                 stats.put("total", rs.getInt("total_count"));
+                stats.put("abdest", rs.getInt("abdest_count"));
             }
         } catch (SQLException e) { e.printStackTrace(); }
         return stats;
@@ -135,6 +137,36 @@ public class DatabaseManager {
         return "Yok";
     }
 
+    public int getRank(UUID uuid, boolean isMonthly) {
+        String prefix = plugin.getConfig().getString("Settings.Database.Table-Prefix", "moxcamii_");
+        String col = isMonthly ? "monthly_count" : "total_count";
+        try (Connection conn = dataSource.getConnection();
+             PreparedStatement ps = conn.prepareStatement(
+                     "SELECT COUNT(*) + 1 AS rank FROM " + prefix + "users WHERE " + col + " > (SELECT " + col + " FROM " + prefix + "users WHERE uuid = ?)"
+             )) {
+            ps.setString(1, uuid.toString());
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) return rs.getInt("rank");
+        } catch (SQLException e) { e.printStackTrace(); }
+        return 0;
+    }
+
+    public void incrementWuduCount(UUID uuid, String name) {
+        String prefix = plugin.getConfig().getString("Settings.Database.Table-Prefix", "moxcamii_");
+        Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
+            try (Connection conn = dataSource.getConnection()) {
+                String sql = plugin.getConfig().getString("Settings.Database.Type").equalsIgnoreCase("MySQL")
+                        ? "INSERT INTO " + prefix + "users (uuid, name, abdest_count) VALUES (?, ?, 1) ON DUPLICATE KEY UPDATE abdest_count = abdest_count + 1"
+                        : "INSERT INTO " + prefix + "users (uuid, name, abdest_count) VALUES (?, ?, 1) ON CONFLICT(uuid) DO UPDATE SET abdest_count = abdest_count + 1";
+                try (PreparedStatement ps = conn.prepareStatement(sql)) {
+                    ps.setString(1, uuid.toString());
+                    ps.setString(2, name);
+                    ps.executeUpdate();
+                }
+            } catch (SQLException e) { e.printStackTrace(); }
+        });
+    }
+
     public void recordPrayer(UUID uuid, String name, String prayerNameRaw) {
         String prefix = plugin.getConfig().getString("Settings.Database.Table-Prefix", "moxcamii_");
         Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
@@ -148,23 +180,23 @@ public class DatabaseManager {
                 try (PreparedStatement ps = conn.prepareStatement(sql)) {
                     ps.setString(1, uuid.toString());
                     ps.setString(2, name);
-                    ps.setString(3, prayerNameRaw);
-                    ps.setString(4, prayerNameRaw);
+                    String displayForLastPrayer = org.bukkit.ChatColor.stripColor(com.mox.MoxCamii.utils.ColorUtils.color(prayerNameRaw));
+                    ps.setString(3, displayForLastPrayer);
+                    ps.setString(4, displayForLastPrayer);
                     ps.executeUpdate();
                 }
             } catch (SQLException e) { e.printStackTrace(); }
         });
     }
 
-    public List<Map.Entry<String, Integer>> getTop10(boolean monthly) {
+    public List<Map.Entry<String, Integer>> getTop10(String columnName) {
         String prefix = plugin.getConfig().getString("Settings.Database.Table-Prefix", "moxcamii_");
         List<Map.Entry<String, Integer>> list = new ArrayList<>();
-        String col = monthly ? "monthly_count" : "total_count";
         try (Connection conn = dataSource.getConnection();
-             PreparedStatement ps = conn.prepareStatement("SELECT name, " + col + " FROM " + prefix + "users ORDER BY " + col + " DESC LIMIT 10")) {
+             PreparedStatement ps = conn.prepareStatement("SELECT name, " + columnName + " FROM " + prefix + "users ORDER BY " + columnName + " DESC LIMIT 10")) {
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
-                list.add(new AbstractMap.SimpleEntry<>(rs.getString("name"), rs.getInt(col)));
+                list.add(new AbstractMap.SimpleEntry<>(rs.getString("name"), rs.getInt(columnName)));
             }
         } catch (SQLException e) { e.printStackTrace(); }
         return list;

@@ -34,13 +34,8 @@ public class RewardManager {
         config = YamlConfiguration.loadConfiguration(file);
     }
 
-    public void reload() {
-        loadFile();
-    }
-
-    public FileConfiguration getConfig() {
-        return config;
-    }
+    public void reload() { loadFile(); }
+    public FileConfiguration getConfig() { return config; }
 
     public boolean isSitting(Player p) {
         if (p.isInsideVehicle() && p.getVehicle() instanceof ArmorStand) {
@@ -50,7 +45,7 @@ public class RewardManager {
         return false;
     }
 
-    public void distributeRewards(String displayName) {
+    public void distributeRewards(String rawName, String displayName) {
         String prefix = ColorUtils.color(plugin.getConfig().getString("Settings.Prefix", ""));
         String rewardMsg = plugin.getMessagesConfig().getString("Messages.RewardGiven");
         String notSittingMsg = plugin.getMessagesConfig().getString("Messages.NotSitting");
@@ -62,9 +57,10 @@ public class RewardManager {
             if (!inRegion) continue;
 
             if (isSitting(p)) {
-                plugin.getDatabaseManager().recordPrayer(p.getUniqueId(), p.getName(), displayName);
-
+                plugin.getDatabaseManager().recordPrayer(p.getUniqueId(), p.getName(), rawName);
                 if (rewardMsg != null) p.sendMessage(prefix + ColorUtils.color(rewardMsg.replace("{VAKIT}", displayName)));
+                if (plugin.getSoundManager() != null) plugin.getSoundManager().playSound(p, "Reward");
+
                 for (String cmd : rewards) {
                     cmd = cmd.replace("{PLAYER}", p.getName()).replace("{VAKIT}", displayName);
                     Bukkit.dispatchCommand(Bukkit.getConsoleSender(), cmd);
@@ -75,29 +71,36 @@ public class RewardManager {
         }
     }
 
+    // Aylık ödülleri hesaplayan ve dağıtılmak üzere askıya alan ana metot
+    private void processMonthlyRewards() {
+        List<Map.Entry<String, Integer>> top = plugin.getDatabaseManager().getTop10("monthly_count");
+
+        for (int i = 0; i < Math.min(3, top.size()); i++) {
+            Map.Entry<String, Integer> entry = top.get(i);
+            String tier = "top" + (i + 1);
+            int minNamaz = config.getInt("monthly-rewards.tops." + tier + ".minimum-namaz", 0);
+
+            if (entry.getValue() >= minNamaz) {
+                UUID uuid = plugin.getDatabaseManager().getUUIDFromName(entry.getKey());
+                if (uuid != null) plugin.getDatabaseManager().setPendingReward(uuid, tier);
+            }
+        }
+        plugin.getDatabaseManager().resetMonthlyStats();
+    }
+
+    // /camiadmin sezon bitir komutuyla tetiklenir
+    public void forceEndSeason() {
+        processMonthlyRewards();
+    }
+
     private void startMonthlyTask() {
         Bukkit.getScheduler().runTaskTimerAsynchronously(plugin, () -> {
             Calendar cal = Calendar.getInstance();
             int newMonth = cal.get(Calendar.MONTH);
 
             if (newMonth != currentMonth) {
-                List<Map.Entry<String, Integer>> top = plugin.getDatabaseManager().getTop10(true);
-
-                for (int i = 0; i < Math.min(3, top.size()); i++) {
-                    Map.Entry<String, Integer> entry = top.get(i);
-                    String tier = "top" + (i + 1);
-                    int minNamaz = config.getInt("monthly-rewards.tops." + tier + ".minimum-namaz", 0);
-
-                    if (entry.getValue() >= minNamaz) {
-                        UUID uuid = plugin.getDatabaseManager().getUUIDFromName(entry.getKey());
-                        if (uuid != null) {
-                            plugin.getDatabaseManager().setPendingReward(uuid, tier);
-                        }
-                    }
-                }
-
+                processMonthlyRewards();
                 currentMonth = newMonth;
-                plugin.getDatabaseManager().resetMonthlyStats();
             }
         }, 1200L, 1200L);
     }

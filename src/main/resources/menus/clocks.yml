@@ -1,0 +1,37 @@
+title: "&#27ae60⛫ &8Namaz Vakitleri"
+size: 36
+pattern:
+  - "# # # # # # # # #"
+  - "# @ @ @ # @ @ @ #"
+  - "# # # # # # # # #"
+  - "# # # # O # # # #"
+items:
+  "#":
+    material: BLACK_STAINED_GLASS_PANE
+    name: " "
+    lore: []
+  "@":
+    material: PAPER
+    name: "{VAKIT} &fVakti"
+    lore:
+      - ""
+      - "&#198a44» &7Saat: &f{SAAT}"
+      - ""
+      - "&#f1c40f✦ &eCemaate katıl, sevabını katla!"
+  "O":
+    material: BOOK
+    name: "&fÖzel Namazlar"
+    lore:
+      - ""
+      - "&7Bayram, Teravih ve diğer"
+      - "&7özel namaz vakitlerini görmek"
+      - "&7için tıklayın."
+      - ""
+      - "&#f1c40f✦ &eGörüntülemek için tıkla!"
+Heads:
+  Imsak: "" # base64 kodlarını buraya girebilirsiniz
+  Gunes: ""
+  Ogle: ""
+  Ikindi: ""
+  Aksam: ""
+  Yatsi: ""

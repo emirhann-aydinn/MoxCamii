@@ -26,6 +26,8 @@ public class MoxCamii extends JavaPlugin {
     private RedisManager redisManager;
     private PrayerTimeManager prayerTimeManager;
     private GuiManager guiManager;
+    private SoundManager soundManager;
+    private PermissionManager permissionManager; // EKLENDİ
 
     private FileConfiguration messagesConfig;
     private File messagesFile;
@@ -45,6 +47,8 @@ public class MoxCamii extends JavaPlugin {
         safeSaveResource("settings/clocks.yml");
         safeSaveResource("settings/special_clocks.yml");
         safeSaveResource("settings/rewards.yml");
+        safeSaveResource("settings/sounds.yml");
+        safeSaveResource("settings/permissions.yml"); // EKLENDİ
         safeSaveResource("menus/clocks.yml");
         safeSaveResource("menus/special_clocks.yml");
         safeSaveResource("menus/own-info.yml");
@@ -52,6 +56,8 @@ public class MoxCamii extends JavaPlugin {
         safeSaveResource("menus/ban-list.yml");
         safeSaveResource("menus/confirm.yml");
 
+        this.permissionManager = new PermissionManager(this); // EKLENDİ
+        this.soundManager = new SoundManager(this);
         this.databaseManager = new DatabaseManager(this);
         this.regionManager = new RegionManager(this);
         this.wuduManager = new WuduManager(this);
@@ -103,6 +109,8 @@ public class MoxCamii extends JavaPlugin {
         reloadConfig();
         this.messagesConfig = null;
         this.specialClocksConfig = null;
+        this.permissionManager.loadFile(); // EKLENDİ
+        this.soundManager.loadFile();
         this.databaseManager.reload();
         this.regionManager.reload();
         this.rewardManager.reload();
@@ -144,12 +152,8 @@ public class MoxCamii extends JavaPlugin {
 
     public void saveSpecialClocksConfig() {
         try {
-            if (specialClocksConfig != null && specialClocksFile != null) {
-                specialClocksConfig.save(specialClocksFile);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+            if (specialClocksConfig != null && specialClocksFile != null) specialClocksConfig.save(specialClocksFile);
+        } catch (IOException e) { e.printStackTrace(); }
     }
 
     public static MoxCamii getInstance() { return instance; }
@@ -161,4 +165,6 @@ public class MoxCamii extends JavaPlugin {
     public RedisManager getRedisManager() { return redisManager; }
     public PrayerTimeManager getPrayerTimeManager() { return prayerTimeManager; }
     public GuiManager getGuiManager() { return guiManager; }
+    public SoundManager getSoundManager() { return soundManager; }
+    public PermissionManager getPermissionManager() { return permissionManager; } // EKLENDİ
 }

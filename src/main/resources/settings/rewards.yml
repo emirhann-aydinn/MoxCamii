@@ -1,5 +1,7 @@
+# Bir namazı kıldığında verilecek anlık ödüller
 Rewards:
   - "eco give {PLAYER} 150"
+  - "xp give {PLAYER} 50"
 
 monthly-rewards:
   command: "/namazödülüm"
@@ -7,7 +9,7 @@ monthly-rewards:
   reward-claimed-message: "&#27ae60✔ Tebrikler! Aylık namaz sıralaması ödülünüz başarıyla hesabınıza tanımlandı."
   tops:
     top1:
-      minimum-namaz: 5
+      minimum-namaz: 5 # Top 1 olsa bile en az 5 namazı olması lazım ki ödül alsın.
       commands:
         - "eco give {PLAYER} 100000"
         - "give {PLAYER} diamond_block 64"

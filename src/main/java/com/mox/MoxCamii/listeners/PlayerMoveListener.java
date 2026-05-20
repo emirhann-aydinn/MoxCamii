@@ -1,4 +1,3 @@
-// src/main/java/com/mox/MoxCamii/listeners/PlayerMoveListener.java
 package com.mox.MoxCamii.listeners;
 
 import com.mox.MoxCamii.MoxCamii;
@@ -38,7 +37,7 @@ public class PlayerMoveListener implements Listener {
 
         String banReason = plugin.getDatabaseManager().getBanReason(p.getUniqueId());
         if (banReason != null && (!wasInRegion && isInRegion || !wasInDoor && isInDoor)) {
-            String banMsg = plugin.getConfig().getString("Messages.Banned");
+            String banMsg = plugin.getMessagesConfig().getString("Messages.Banned");
             if (banMsg != null) {
                 p.sendMessage(prefix + ColorUtils.color(banMsg.replace("{REASON}", banReason)));
             }
@@ -62,8 +61,8 @@ public class PlayerMoveListener implements Listener {
             event.setTo(from);
 
             p.sendTitle(
-                    ColorUtils.color(plugin.getConfig().getString("Messages.DoorDeniedTitle")),
-                    ColorUtils.color(plugin.getConfig().getString("Messages.DoorDeniedSubtitle")),
+                    ColorUtils.color(plugin.getMessagesConfig().getString("Messages.DoorDeniedTitle", "&#e74c3c✖ Giremezsiniz!")),
+                    ColorUtils.color(plugin.getMessagesConfig().getString("Messages.DoorDeniedSubtitle", "&7İçeri girmek için abdest almalısınız.")),
                     5, 20, 5
             );
             p.playSound(p.getLocation(), org.bukkit.Sound.ENTITY_VILLAGER_NO, 1.0f, 1.0f);

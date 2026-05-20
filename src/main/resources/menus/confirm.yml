@@ -1,0 +1,21 @@
+title: "&8Emin misiniz?"
+size: 27
+pattern:
+  - "# # # # # # # # #"
+  - "# # Y # # # N # #"
+  - "# # # # # # # # #"
+items:
+  "#":
+    material: BLACK_STAINED_GLASS_PANE
+    name: " "
+    lore: []
+  "Y":
+    material: GREEN_TERRACOTTA
+    name: "&a&lONAYLA"
+    lore:
+      - "&7Bu {TARGET} silinecek."
+  "N":
+    material: RED_TERRACOTTA
+    name: "&c&lİPTAL ET"
+    lore:
+      - "&7İşlemi iptal et."

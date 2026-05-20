@@ -33,25 +33,34 @@ public class IstanbulPrayerAPI {
                 plugin.getPrayerTimeManager().saveConfig();
             }
 
+            // ÖZEL NAMAZLARIN OTOMATİK HİCRİ TAKVİM KONTROLÜ
             try {
                 int hijriMonth = hijri.getAsJsonObject("month").get("number").getAsInt();
                 int hijriDay = hijri.get("day").getAsInt();
                 FileConfiguration scConfig = plugin.getSpecialClocksConfig();
+
                 if (scConfig != null) {
-                    if (scConfig.getBoolean("special_clocks.ramazan.auto-enable")) {
+                    // Ramazan & Teravih Kontrolü (Hicri 9. Ay)
+                    if (scConfig.getBoolean("special_clocks.clocks.ramazan.auto-enable")) {
                         boolean isRamazan = (hijriMonth == 9);
-                        scConfig.set("special_clocks.ramazan.status", isRamazan);
-                        scConfig.set("special_clocks.ramazan.types.teravih.status", isRamazan);
-                        scConfig.set("special_clocks.ramazan.types.ramazan_bayrami_namazi.status", (hijriMonth == 10 && hijriDay == 1));
+                        boolean isRamazanBayrami = (hijriMonth == 10 && hijriDay == 1);
+
+                        scConfig.set("special_clocks.clocks.ramazan.status", isRamazan || isRamazanBayrami);
+                        scConfig.set("special_clocks.clocks.ramazan.types.teravih.status", isRamazan);
+                        scConfig.set("special_clocks.clocks.ramazan.types.ramazan_bayrami_namazi.status", isRamazanBayrami);
                     }
 
-                    if (scConfig.getBoolean("special_clocks.kurban_bayrami.auto-enable")) {
-                        scConfig.set("special_clocks.kurban_bayrami.status", (hijriMonth == 12 && hijriDay == 10));
-                        scConfig.set("special_clocks.kurban_bayrami.types.kurban_bayrami_namazi.status", (hijriMonth == 12 && hijriDay == 10));
+                    // Kurban Bayramı Kontrolü (Hicri 12. Ay, 10. Gün)
+                    if (scConfig.getBoolean("special_clocks.clocks.kurban_bayrami.auto-enable")) {
+                        boolean isKurbanBayrami = (hijriMonth == 12 && hijriDay >= 10 && hijriDay <= 13);
+                        scConfig.set("special_clocks.clocks.kurban_bayrami.status", isKurbanBayrami);
+                        scConfig.set("special_clocks.clocks.kurban_bayrami.types.kurban_bayrami_namazi.status", (hijriMonth == 12 && hijriDay == 10));
                     }
                     plugin.saveSpecialClocksConfig();
                 }
-            } catch (Exception ignored) {}
+            } catch (Exception ignored) {
+                plugin.getLogger().warning("Hicri takvim verisi çekilirken hata oluştu, özel namazlar güncellenemedi.");
+            }
 
             return true;
         } catch (Exception e) {

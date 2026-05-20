@@ -1,40 +1,32 @@
-title: "&#27ae60⛫ &8Sorgu Detayları"
+title: "&#27ae60⛫ &8Oyuncu Sorgusu"
 size: 27
 pattern:
   - "# # # # # # # # #"
-  - "# # A P B # # # #"
+  - "# # # # P # # # #"
   - "# # # # # # # # #"
 items:
   "#":
     material: BLACK_STAINED_GLASS_PANE
     name: " "
     lore: []
-  "A":
-    material: BOOK
-    name: "&#f1c40fAylık & Kalıcı Veriler"
-    lore:
-      - ""
-      - "&7Aylık Sıralama: &#27ae60#{RANK}"
-      - "&7Aylık Kılınan: &f{MONTHLY}"
-      - "&7Toplam Kılınan: &f{TOTAL}"
   "P":
     material: PLAYER_HEAD
     name: "&#27ae60{PLAYER}"
     lore:
       - ""
-      - "&7İmsak: &f{IMSAK}"
-      - "&7Güneş: &f{GUNES}"
-      - "&7Öğle: &f{OGLE}"
-      - "&7İkindi: &f{IKINDI}"
-      - "&7Akşam: &f{AKSAM}"
-      - "&7Yatsı: &f{YATSI}"
-      - "&7Teravih: &f{TERAVIH}"
+      - "&7Aylık Sıralama: &#27ae60#{RANK}"
+      - ""
+      - "&7Kılınan Namaz (Toplam: &f{TOTAL}&7)"
+      - " &8- &7İmsak: &f{IMSAK}"
+      - " &8- &7Güneş: &f{GUNES}"
+      - " &8- &7Öğle: &f{OGLE}"
+      - " &8- &7İkindi: &f{IKINDI}"
+      - " &8- &7Akşam: &f{AKSAM}"
+      - " &8- &7Yatsı: &f{YATSI}"
+      - " &8- &7Teravih: &f{TERAVIH}"
+      - " &8- &7Bayram: &f{BAYRAM}"
       - ""
       - "&7Son Kılınan: &#f1c40f{LAST}"
-      - "&7Abdest Durumu: {WUDU_STATUS}"
-  "B":
-    material: BARRIER
-    name: "&#e74c3cCami Yasak Durumu"
-    lore:
+      - "&7Alınan Abdest: &f{ABDEST_COUNT}"
       - ""
-      - "{BAN_STATUS}"
+      - "{BAN_LINES}"

@@ -1,5 +1,5 @@
 Settings:
-  Prefix: "&#27ae60☪ &#2ebd68&lMoxCamii &8» &7"
+  Prefix: "&#27ae60☪ &#2ebd68&lCamii &8» &7"
 
   Namaz-Vakitleri:
     Timezone: "Europe/Istanbul"
@@ -9,7 +9,7 @@ Settings:
     Abdest-Timeout: 30
     Door-Pushback-Strength: 1.5
     Reward-Delay-Seconds: 5
-    Seat-YOffset: -1.7
+    Seat-YOffset: 0
 
   Database:
     Type: "SQLite" # SQLite veya MySQL

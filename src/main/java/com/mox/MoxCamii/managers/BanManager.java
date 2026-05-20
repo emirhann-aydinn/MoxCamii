@@ -3,8 +3,10 @@ package com.mox.MoxCamii.managers;
 import com.mox.MoxCamii.MoxCamii;
 import com.mox.MoxCamii.utils.ColorUtils;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -24,6 +26,14 @@ public class BanManager {
         String date = new SimpleDateFormat("dd.MM.yyyy HH:mm").format(new Date());
 
         plugin.getDatabaseManager().banUser(uuid, op.getName() != null ? op.getName() : playerName, reason, author, date, expireTime);
+
+        Player targetPlayer = Bukkit.getPlayer(uuid);
+        if (targetPlayer != null && plugin.getRegionManager().isInRegion(targetPlayer.getLocation())) {
+            Location banSpawn = plugin.getRegionManager().getBanSpawn();
+            if (banSpawn != null) targetPlayer.teleport(banSpawn);
+            String msg = plugin.getMessagesConfig().getString("Messages.Banned", "&cCami'ye girişiniz yasaklanmıştır! Sebep: {REASON}");
+            targetPlayer.sendMessage(ColorUtils.color(plugin.getConfig().getString("Settings.Prefix", "") + msg.replace("{REASON}", reason)));
+        }
     }
 
     public void unbanPlayer(String playerName, CommandSender sender) {

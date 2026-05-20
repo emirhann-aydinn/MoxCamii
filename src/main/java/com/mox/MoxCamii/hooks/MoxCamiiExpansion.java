@@ -17,7 +17,7 @@ public class MoxCamiiExpansion extends PlaceholderExpansion {
     @Override
     public String getAuthor() { return "MoxNetwork"; }
     @Override
-    public String getVersion() { return "2.5"; }
+    public String getVersion() { return "2.6"; }
     @Override
     public boolean persist() { return true; }
 
@@ -41,6 +41,15 @@ public class MoxCamiiExpansion extends PlaceholderExpansion {
 
         if (params.equalsIgnoreCase("son_kilan_namaz")) {
             return plugin.getDatabaseManager().getLastPrayer(player.getUniqueId());
+        }
+
+        // --- YENİ HOLOGRAM / GERİ SAYIM PLACEHOLDERLARI ---
+        if (params.equalsIgnoreCase("next_prayer")) {
+            return plugin.getPrayerTimeManager().getNextPrayerName();
+        }
+
+        if (params.equalsIgnoreCase("time_left")) {
+            return plugin.getPrayerTimeManager().getCountdownFormatted();
         }
 
         return null;

@@ -1,8 +1,6 @@
-// src/main/java/com/mox/MoxCamii/managers/WuduManager.java
 package com.mox.MoxCamii.managers;
 
 import com.mox.MoxCamii.MoxCamii;
-import com.mox.MoxCamii.utils.ColorUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -16,94 +14,91 @@ import java.util.*;
 public class WuduManager {
 
     private final MoxCamii plugin;
+    private final Set<Location> taps = new HashSet<>();
+    private final Map<UUID, Long> wuduTimes = new HashMap<>();
+
     private File file;
     private FileConfiguration config;
-    private final Set<Location> wuduTaps = new HashSet<>();
-    private final Map<UUID, Long> wuduTimes = new HashMap<>();
 
     public WuduManager(MoxCamii plugin) {
         this.plugin = plugin;
         loadFile();
-        startExpiryTask();
     }
 
     private void loadFile() {
         file = new File(plugin.getDataFolder(), "locations/abdest_muslugu.yml");
         if (!file.exists()) {
-            try { file.createNewFile(); } catch (IOException ignored) {}
+            file.getParentFile().mkdirs();
+            try { file.createNewFile(); } catch (IOException e) { e.printStackTrace(); }
         }
         config = YamlConfiguration.loadConfiguration(file);
+        loadTaps();
+    }
 
-        wuduTaps.clear();
+    public void reload() {
+        saveData();
+        loadFile();
+    }
+
+    private void loadTaps() {
+        taps.clear();
         if (config.contains("Taps")) {
             for (String key : config.getConfigurationSection("Taps").getKeys(false)) {
-                wuduTaps.add(new Location(
-                        Bukkit.getWorld(config.getString("Taps." + key + ".World")),
-                        config.getDouble("Taps." + key + ".X"),
-                        config.getDouble("Taps." + key + ".Y"),
-                        config.getDouble("Taps." + key + ".Z")
-                ));
+                Location loc = config.getLocation("Taps." + key);
+                if (loc != null) taps.add(loc);
             }
         }
     }
 
-    public void reload() {
-        loadFile();
-    }
-
     public void saveData() {
+        if (config == null || file == null) return;
         config.set("Taps", null);
         int i = 0;
-        for (Location loc : wuduTaps) {
-            config.set("Taps." + i + ".World", loc.getWorld().getName());
-            config.set("Taps." + i + ".X", loc.getX());
-            config.set("Taps." + i + ".Y", loc.getY());
-            config.set("Taps." + i + ".Z", loc.getZ());
+        for (Location loc : taps) {
+            config.set("Taps.tap" + i, loc);
             i++;
         }
-        try { config.save(file); } catch (IOException ignored) {}
+        try { config.save(file); } catch (IOException e) { e.printStackTrace(); }
+    }
+
+    public boolean isTap(Location loc) {
+        return taps.contains(loc);
     }
 
     public void addTap(Location loc) {
-        wuduTaps.add(loc);
+        taps.add(loc);
         saveData();
     }
 
     public void removeTap(Location loc) {
-        wuduTaps.remove(loc);
+        taps.remove(loc);
         saveData();
     }
 
-    public boolean isTap(Location loc) {
-        return wuduTaps.contains(loc);
+    public boolean hasWudu(UUID uuid) {
+        if (!wuduTimes.containsKey(uuid)) return false;
+
+        long takeTime = wuduTimes.get(uuid);
+        long expireTime = plugin.getConfig().getLong("Settings.Others.Wudu-Expire-Minutes", 60) * 60 * 1000;
+
+        if (System.currentTimeMillis() - takeTime > expireTime) {
+            wuduTimes.remove(uuid); // Süresi dolunca abdest silinir
+            return false;
+        }
+        return true;
     }
 
+    // Abdest ver ve Veritabanında sayacı 1 artır
     public void giveWudu(UUID uuid) {
         wuduTimes.put(uuid, System.currentTimeMillis());
+        Player p = Bukkit.getPlayer(uuid);
+        if (p != null) {
+            plugin.getDatabaseManager().incrementWuduCount(uuid, p.getName());
+        }
     }
 
-    public boolean hasWudu(UUID uuid) {
-        return wuduTimes.containsKey(uuid);
-    }
-
-    private void startExpiryTask() {
-        Bukkit.getScheduler().runTaskTimerAsynchronously(plugin, () -> {
-            int durationMinutes = plugin.getConfig().getInt("Settings.AbdestSuresiDakika", 30);
-            long expiryTime = durationMinutes * 60 * 1000L;
-            long now = System.currentTimeMillis();
-
-            wuduTimes.entrySet().removeIf(entry -> {
-                if (now - entry.getValue() > expiryTime) {
-                    Player p = Bukkit.getPlayer(entry.getKey());
-                    if (p != null) {
-                        String prefix = plugin.getConfig().getString("Settings.Prefix", "");
-                        String msg = plugin.getConfig().getString("Messages.WuduExpired");
-                        p.sendMessage(ColorUtils.color(prefix + msg));
-                    }
-                    return true;
-                }
-                return false;
-            });
-        }, 20L * 60, 20L * 60);
+    // Komut veya admin tarafından zorla abdesti silme
+    public void removeWudu(UUID uuid) {
+        wuduTimes.remove(uuid);
     }
 }

@@ -1,0 +1,117 @@
+# ========================================== #
+#           MOXCAMII MESAJ DOSYASI           #
+# ========================================== #
+
+Namaz-Names:
+  Imsak: "&#2980b9İmsak"
+  Gunes: "&#f1c40fGüneş"
+  Ogle: "&#f39c12Öğle"
+  Ikindi: "&#e67e22İkindi"
+  Aksam: "&#e74c3cAkşam"
+  Yatsi: "&#8e44adYatsı"
+  Ramazan-Bayram: "&#f39c12Ramazan Bayramı"
+  kurban-Bayram: "&#f39c12Kurban Bayramı"
+  Teravih: "&#f39c12Teravih"
+
+# EŞYA İSİMLERİ VE AÇIKLAMALARI
+WandName: "&#f1c40f&lMoxCamii Cami Seçici"
+WandLore:
+  - "&7Sol Tık: &fCami Pos-1 Belirle"
+  - "&7Sağ Tık: &fCami Pos-2 Belirle"
+
+DoorWandName: "&#3498db&lMoxCamii Kapı Seçici"
+DoorWandLore:
+  - "&7Sol Tık: &bKapı Pos-1 Belirle"
+  - "&7Sağ Tık: &bKapı Pos-2 Belirle"
+
+TapWandName: "&#27ae60&lAbdest Musluğu Belirleyici"
+TapWandLore:
+  - "&7Sağ Tık: &aMusluk Ekle/Kaldır"
+
+Messages:
+  # Sistem & Yetki
+  NoPermission: "&#e74c3c✖ Bu işlemi yapmak için yetkiniz bulunmuyor."
+  Reloaded: "&#27ae60✔ Eklenti dosyaları başarıyla yenilendi!"
+  TestTriggered: "&#2980b9✔ {VAKIT} namazı için test ezanı tetiklendi."
+
+  # Araç (Wand) Mesajları
+  WandGiven: "&#27ae60✔ Cami seçim baltası verildi. (Sol/Sağ tık ile alan seçin)"
+  DoorWandGiven: "&#2980b9✔ Kapı seçim baltası verildi. (Sol/Sağ tık ile alan seçin)"
+  AbdestWandGiven: "&#27ae60✔ Abdest musluğu belirleyici çubuğu verildi."
+  CreateUsage: "&#e74c3c✖ Kullanım: /camiadmin create <cami|kapi>"
+
+  # Bölge & Kayıt Mesajları
+  RegionExists: "&#e74c3c✖ Zaten kayıtlı bir Cami var. Lütfen önce silin (/camiadmin sil)."
+  RegionNotSelected: "&#e74c3c✖ Lütfen önce Cami Seçici balta ile 2 noktayı belirleyin (Sol/Sağ Tık)!"
+  RegionCreated: "&#27ae60✔ Cami bölgesi başarıyla oluşturuldu."
+  RegionDeleted: "&#27ae60✔ Bölge başarıyla silindi."
+  DoorExists: "&#e74c3c✖ Zaten kayıtlı bir Kapı giriş bölgesi var. Önce silin."
+  DoorNotSelected: "&#e74c3c✖ Lütfen önce Kapı Seçici balta ile 2 noktayı belirleyin!"
+  DoorCreated: "&#2980b9✔ Kapı bölgesi başarıyla oluşturuldu."
+  SpawnSet: "&#27ae60✔ Cami doğma/abdest noktası ayarlandı."
+  BanSpawnSet: "&#27ae60✔ Cami'den yasaklı olanların doğacağı (atılacağı) nokta ayarlandı."
+
+  # Abdest Sistemi
+  TapAdded: "&#27ae60✔ Bu blok artık bir abdest musluğu."
+  TapRemoved: "&#e74c3c✖ Abdest musluğu iptal edildi."
+  WuduEarly: "&#e74c3c✖ Şu anda abdest alamazsınız. Bir sonraki namaz vaktine 10 dakikadan az kalması gerekmektedir."
+  AlreadyHasWudu: "&#e74c3c✖ Zaten abdestiniz bulunuyor."
+  NoWudu: "&#e74c3c✖ Abdestsiz saf tutamazsınız! Önce abdest almalısınız."
+  WuduTakenTitle: "&#2980b9Abdest Alındı"
+  WuduTakenSubtitle: "&7Namaza hazırsınız."
+
+  # İbadet & Ödül
+  SafJoined: "&#27ae60✔ Safa katıldınız. Allah kabul etsin."
+  SafLeft: "&#e74c3c✖ Saftan ayrıldınız."
+  ActionbarSitting: "&#27ae60☪ Namaz kılıyorsunuz..."
+  RewardGiven: "&#27ae60✔ {VAKIT} namazını cemaatle eda ettiğiniz için ödül kazandınız!"
+  NotSitting: "&#e74c3c✖ Ezan okunurken safta olmadığınız için ödülü kaçırdınız."
+
+  # Giriş Koruma Sistemi
+  DoorDeniedTitle: "&#e74c3c✖ Giremezsiniz!"
+  DoorDeniedSubtitle: "&7İçeri girmek için abdest almalısınız."
+  Banned: "&#e74c3c✖ Cami'ye girişiniz yasaklanmıştır! Sebep: &f{REASON}"
+  BanSuccess: "&#27ae60✔ {PLAYER} adlı oyuncu Cami'den yasaklandı."
+  TempBanSuccess: "&#27ae60✔ {PLAYER} adlı oyuncu {HOURS} saatliğine Cami'den yasaklandı."
+  UnbanSuccess: "&#27ae60✔ {PLAYER} adlı oyuncunun yasağı kaldırıldı."
+  NotBanned: "&#e74c3c✖ Bu oyuncu zaten yasaklı değil."
+
+  # Yönetici Abdest Komutu Mesajları
+  AdminWuduGiven: "&#27ae60✔ {PLAYER} adlı oyuncuya abdest aldırıldı."
+  AdminWuduRemoved: "&#e74c3c✖ {PLAYER} adlı oyuncunun abdesti kaldırıldı."
+  PlayerWuduGivenByAdmin: "&#27ae60✔ Bir yetkili size abdest aldırdı."
+  PlayerWuduRemovedByAdmin: "&#e74c3c✖ Bir yetkili abdestinizi bozdu."
+  PlayerNotFound: "&#e74c3c✖ Oyuncu bulunamadı veya çevrimdışı."
+
+
+Commands:
+  PlayerHelp:
+    - "&8&m----------------------------------------"
+    - " &#27ae60&lMoxCamii Sistemi"
+    - ""
+    - "  &#f1c40f/cami sorgu [oyuncu] &7- Cami kayıtlarını gösterir."
+    - "  &#f1c40f/cami vakitler &7- Namaz vakitlerini gösterir."
+    - "  &#f1c40f/cami top &7- Aylık/Toplam namaz sıralamasını gösterir."
+    - "  &#f1c40f/namazödülüm &7- Sıralamaya girdiyseniz ödülünüzü alırsınız."
+    - "&8&m----------------------------------------"
+
+  AdminHelp:
+    - "&8&m----------------------------------------"
+    - " &#e74c3c&lMoxCamii Yönetici Komutları"
+    - ""
+    - "  &#f1c40f/camiadmin wand &7- Cami bölgesi seçim aracı."
+    - "  &#f1c40f/camiadmin doorwand &7- Kapı giriş bölgesi seçim aracı."
+    - ""
+    - "  &#f1c40f/camiadmin create <cami|kapi> &7- Seçili alanı kaydeder."
+    - "  &#f1c40f/camiadmin sil &7- Mevcut alanı siler."
+    - "  &#f1c40f/camiadmin setspawn <abdest|ban> &7- Işınlanma noktalarını belirler."
+    - ""
+    - "  &#f1c40f/camiadmin abdest &7- Musluk ayarlama çubuğu verir."
+    - ""
+    - "  &#f1c40f/camiadmin ban <oyuncu> <sebep> &7- Oyuncuyu camiden yasaklar."
+    - "  &#f1c40f/camiadmin unban <oyuncu> &7- Yasağı kaldırır."
+    - "  &#f1c40f/camiadmin banlist &7- Yasaklılar listesini açar."
+    - ""
+    - "  &#f1c40f/camiadmin test <vakit> &7- Vakti zorla tetikler (Ezan/Ödül)."
+    - "  &#f1c40f/camiadmin reload &7- Eklentiyi yeniler."
+    - "&8&m----------------------------------------"

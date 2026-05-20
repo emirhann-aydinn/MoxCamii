@@ -1,0 +1,33 @@
+title: "&#27ae60⛫ &8Sıralama: {SORT}"
+size: 45
+pattern:
+  - "# # # # M # # # #"
+  - "# # X X X X X # #"
+  - "# # X X X X X # #"
+  - "# # # # # # # # #"
+  - "# # # # S # # # #"
+items:
+  "#":
+    material: BLACK_STAINED_GLASS_PANE
+    name: " "
+    lore: []
+  "X":
+    material: PLAYER_HEAD
+    name: "&#f1c40f#{RANK} &#27ae60{PLAYER}"
+    lore:
+      - ""
+      - " &#27ae60Skor: &f{SCORE}"
+  "S":
+    material: HOPPER
+    name: "&eSıralama Türünü Değiştir"
+    lore:
+      -  "
+      - "&8Sıralama Türleri:"
+      - "&f- Toplam Namaz"
+      - "&f- Aylık Namaz"
+      - "&f- Alınan Abdest"
+      - ""
+      - "&7Şu an: &f{SORT_NAME}"
+      - ""
+      - "&fTıklayarak filtreyi"
+      - "&fdeğiştirin."
