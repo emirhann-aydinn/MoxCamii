@@ -1,0 +1,40 @@
+title: "&#27ae60⛫ &8Sorgu Detayları"
+size: 27
+pattern:
+  - "# # # # # # # # #"
+  - "# # A P B # # # #"
+  - "# # # # # # # # #"
+items:
+  "#":
+    material: BLACK_STAINED_GLASS_PANE
+    name: " "
+    lore: []
+  "A":
+    material: BOOK
+    name: "&#f1c40fAylık & Kalıcı Veriler"
+    lore:
+      - ""
+      - "&7Aylık Sıralama: &#27ae60#{RANK}"
+      - "&7Aylık Kılınan: &f{MONTHLY}"
+      - "&7Toplam Kılınan: &f{TOTAL}"
+  "P":
+    material: PLAYER_HEAD
+    name: "&#27ae60{PLAYER}"
+    lore:
+      - ""
+      - "&7İmsak: &f{IMSAK}"
+      - "&7Güneş: &f{GUNES}"
+      - "&7Öğle: &f{OGLE}"
+      - "&7İkindi: &f{IKINDI}"
+      - "&7Akşam: &f{AKSAM}"
+      - "&7Yatsı: &f{YATSI}"
+      - "&7Teravih: &f{TERAVIH}"
+      - ""
+      - "&7Son Kılınan: &#f1c40f{LAST}"
+      - "&7Abdest Durumu: {WUDU_STATUS}"
+  "B":
+    material: BARRIER
+    name: "&#e74c3cCami Yasak Durumu"
+    lore:
+      - ""
+      - "{BAN_STATUS}"

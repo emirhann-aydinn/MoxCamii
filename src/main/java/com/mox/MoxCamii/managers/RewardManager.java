@@ -12,26 +12,34 @@ import org.bukkit.entity.Player;
 import org.bukkit.persistence.PersistentDataType;
 
 import java.io.File;
+import java.util.Calendar;
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 public class RewardManager {
-
     private final MoxCamii plugin;
-    private File file;
     private FileConfiguration config;
+    private int currentMonth;
 
     public RewardManager(MoxCamii plugin) {
         this.plugin = plugin;
+        this.currentMonth = Calendar.getInstance().get(Calendar.MONTH);
         loadFile();
+        startMonthlyTask();
     }
 
     private void loadFile() {
-        file = new File(plugin.getDataFolder(), "rewards.yml");
+        File file = new File(plugin.getDataFolder(), "settings/rewards.yml");
         config = YamlConfiguration.loadConfiguration(file);
     }
 
     public void reload() {
         loadFile();
+    }
+
+    public FileConfiguration getConfig() {
+        return config;
     }
 
     public boolean isSitting(Player p) {
@@ -43,10 +51,9 @@ public class RewardManager {
     }
 
     public void distributeRewards(String displayName) {
-        String prefix = ColorUtils.color(plugin.getConfig().getString("Settings.Prefix", "&8[&6MoxCamii&8] &7"));
-        String rewardMsg = plugin.getConfig().getString("Messages.RewardGiven");
-        String notSittingMsg = plugin.getConfig().getString("Messages.NotSitting");
-
+        String prefix = ColorUtils.color(plugin.getConfig().getString("Settings.Prefix", ""));
+        String rewardMsg = plugin.getMessagesConfig().getString("Messages.RewardGiven");
+        String notSittingMsg = plugin.getMessagesConfig().getString("Messages.NotSitting");
         List<String> rewards = config.getStringList("Rewards");
 
         for (Player p : Bukkit.getOnlinePlayers()) {
@@ -66,5 +73,32 @@ public class RewardManager {
                 if (notSittingMsg != null) p.sendMessage(prefix + ColorUtils.color(notSittingMsg));
             }
         }
+    }
+
+    private void startMonthlyTask() {
+        Bukkit.getScheduler().runTaskTimerAsynchronously(plugin, () -> {
+            Calendar cal = Calendar.getInstance();
+            int newMonth = cal.get(Calendar.MONTH);
+
+            if (newMonth != currentMonth) {
+                List<Map.Entry<String, Integer>> top = plugin.getDatabaseManager().getTop10(true);
+
+                for (int i = 0; i < Math.min(3, top.size()); i++) {
+                    Map.Entry<String, Integer> entry = top.get(i);
+                    String tier = "top" + (i + 1);
+                    int minNamaz = config.getInt("monthly-rewards.tops." + tier + ".minimum-namaz", 0);
+
+                    if (entry.getValue() >= minNamaz) {
+                        UUID uuid = plugin.getDatabaseManager().getUUIDFromName(entry.getKey());
+                        if (uuid != null) {
+                            plugin.getDatabaseManager().setPendingReward(uuid, tier);
+                        }
+                    }
+                }
+
+                currentMonth = newMonth;
+                plugin.getDatabaseManager().resetMonthlyStats();
+            }
+        }, 1200L, 1200L);
     }
 }

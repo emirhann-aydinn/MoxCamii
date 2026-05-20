@@ -1,4 +1,3 @@
-// src/main/java/com/mox/MoxCamii/managers/RegionManager.java
 package com.mox.MoxCamii.managers;
 
 import com.mox.MoxCamii.MoxCamii;
@@ -20,6 +19,7 @@ public class RegionManager {
     private Cuboid camiRegion;
     private Cuboid doorRegion;
     private Location spawnLocation;
+    private Location banSpawnLocation;
     private File file;
     private FileConfiguration config;
 
@@ -35,53 +35,30 @@ public class RegionManager {
     }
 
     private void loadFile() {
-        file = new File(plugin.getDataFolder(), "locations/cami_konum.yml");
+        file = new File(plugin.getDataFolder(), "locations/cami_location.yml");
         if (!file.exists()) {
-            try { file.createNewFile(); } catch (IOException ignored) {}
+            try { file.getParentFile().mkdirs(); file.createNewFile(); } catch (IOException ignored) {}
         }
         config = YamlConfiguration.loadConfiguration(file);
 
         if (config.contains("Region.World")) {
-            Location p1 = new Location(
-                    Bukkit.getWorld(config.getString("Region.World")),
-                    config.getDouble("Region.MinX"),
-                    config.getDouble("Region.MinY"),
-                    config.getDouble("Region.MinZ")
-            );
-            Location p2 = new Location(
-                    Bukkit.getWorld(config.getString("Region.World")),
-                    config.getDouble("Region.MaxX"),
-                    config.getDouble("Region.MaxY"),
-                    config.getDouble("Region.MaxZ")
-            );
+            Location p1 = new Location(Bukkit.getWorld(config.getString("Region.World")), config.getDouble("Region.MinX"), config.getDouble("Region.MinY"), config.getDouble("Region.MinZ"));
+            Location p2 = new Location(Bukkit.getWorld(config.getString("Region.World")), config.getDouble("Region.MaxX"), config.getDouble("Region.MaxY"), config.getDouble("Region.MaxZ"));
             camiRegion = new Cuboid(p1, p2);
         }
 
         if (config.contains("DoorRegion.World")) {
-            Location p1 = new Location(
-                    Bukkit.getWorld(config.getString("DoorRegion.World")),
-                    config.getDouble("DoorRegion.MinX"),
-                    config.getDouble("DoorRegion.MinY"),
-                    config.getDouble("DoorRegion.MinZ")
-            );
-            Location p2 = new Location(
-                    Bukkit.getWorld(config.getString("DoorRegion.World")),
-                    config.getDouble("DoorRegion.MaxX"),
-                    config.getDouble("DoorRegion.MaxY"),
-                    config.getDouble("DoorRegion.MaxZ")
-            );
+            Location p1 = new Location(Bukkit.getWorld(config.getString("DoorRegion.World")), config.getDouble("DoorRegion.MinX"), config.getDouble("DoorRegion.MinY"), config.getDouble("DoorRegion.MinZ"));
+            Location p2 = new Location(Bukkit.getWorld(config.getString("DoorRegion.World")), config.getDouble("DoorRegion.MaxX"), config.getDouble("DoorRegion.MaxY"), config.getDouble("DoorRegion.MaxZ"));
             doorRegion = new Cuboid(p1, p2);
         }
 
         if (config.contains("Spawn.World")) {
-            spawnLocation = new Location(
-                    Bukkit.getWorld(config.getString("Spawn.World")),
-                    config.getDouble("Spawn.X"),
-                    config.getDouble("Spawn.Y"),
-                    config.getDouble("Spawn.Z"),
-                    (float) config.getDouble("Spawn.Yaw"),
-                    (float) config.getDouble("Spawn.Pitch")
-            );
+            spawnLocation = new Location(Bukkit.getWorld(config.getString("Spawn.World")), config.getDouble("Spawn.X"), config.getDouble("Spawn.Y"), config.getDouble("Spawn.Z"), (float) config.getDouble("Spawn.Yaw"), (float) config.getDouble("Spawn.Pitch"));
+        }
+
+        if (config.contains("BanSpawn.World")) {
+            banSpawnLocation = new Location(Bukkit.getWorld(config.getString("BanSpawn.World")), config.getDouble("BanSpawn.X"), config.getDouble("BanSpawn.Y"), config.getDouble("BanSpawn.Z"), (float) config.getDouble("BanSpawn.Yaw"), (float) config.getDouble("BanSpawn.Pitch"));
         }
     }
 
@@ -123,6 +100,15 @@ public class RegionManager {
             config.set("Spawn.Pitch", spawnLocation.getPitch());
         }
 
+        if (banSpawnLocation != null) {
+            config.set("BanSpawn.World", banSpawnLocation.getWorld().getName());
+            config.set("BanSpawn.X", banSpawnLocation.getX());
+            config.set("BanSpawn.Y", banSpawnLocation.getY());
+            config.set("BanSpawn.Z", banSpawnLocation.getZ());
+            config.set("BanSpawn.Yaw", banSpawnLocation.getYaw());
+            config.set("BanSpawn.Pitch", banSpawnLocation.getPitch());
+        }
+
         try {
             config.save(file);
         } catch (IOException e) {
@@ -155,6 +141,14 @@ public class RegionManager {
         saveData();
     }
 
+    public void setBanSpawn(Location loc) {
+        this.banSpawnLocation = loc;
+        saveData();
+    }
+
+    public boolean hasCamiRegion() { return camiRegion != null; }
+    public boolean hasDoorRegion() { return doorRegion != null; }
+
     public boolean isInRegion(Location loc) {
         if (camiRegion == null) return false;
         return camiRegion.contains(loc);
@@ -166,6 +160,7 @@ public class RegionManager {
     }
 
     public Location getSpawn() { return spawnLocation; }
+    public Location getBanSpawn() { return banSpawnLocation != null ? banSpawnLocation : spawnLocation; }
 
     public void setPos1(UUID uuid, Location loc) { pos1Map.put(uuid, loc); }
     public void setPos2(UUID uuid, Location loc) { pos2Map.put(uuid, loc); }

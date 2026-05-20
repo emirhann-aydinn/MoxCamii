@@ -1,21 +1,36 @@
 name: MoxCamii
-version: 2.1
+version: 2.6
 main: com.mox.MoxCamii.MoxCamii
 api-version: 1.13
 authors: [MoxNetwork]
 description: Premium Cami, Namaz ve Abdest Sistemi
 depend: [PlaceholderAPI]
+
 commands:
   cami:
-    description: Cami sistemi ana komutu
+    description: Oyuncu Cami Komutları
     aliases: [camii, mescid]
-  namazlar:
-    description: Namaz vakitlerini menüde gösterir
-    aliases: [vakitler]
+  camiadmin:
+    description: Yönetici Cami Komutları
+  namazödülüm:
+    description: Aylık derece namaz ödülünü talep eder
+    aliases: [namazodulum]
+
 permissions:
-  moxcamii.admin:
-    description: Cami sistemi yönetici komutları erişimi.
-    default: op
   moxcamii.sorgu:
-    description: Cami sorgu komutunu kullanma izni.
+    description: Sorgu menüsüne erişim.
     default: true
+  moxcamii.admin.*:
+    description: Tüm yönetici komutlarına erişim.
+    default: op
+    children:
+      moxcamii.admin.wand: true
+      moxcamii.admin.create: true
+      moxcamii.admin.sil: true
+      moxcamii.admin.abdest: true
+      moxcamii.admin.reload: true
+      moxcamii.admin.setspawn: true
+      moxcamii.admin.ban: true
+      moxcamii.admin.unban: true
+      moxcamii.admin.banlist: true
+      moxcamii.admin.test: true

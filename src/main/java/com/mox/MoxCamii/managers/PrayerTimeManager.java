@@ -7,6 +7,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
+import java.io.IOException;
 import java.time.LocalTime;
 import java.time.ZoneId;
 import java.util.HashMap;
@@ -22,19 +23,39 @@ public class PrayerTimeManager {
     private String lastEzanCache = "";
     private String lastReminderCache = "";
 
+    private String nextPrayerName = "Bilinmiyor";
+    private String countdownFormatted = "00:00:00";
+
     public PrayerTimeManager(MoxCamii plugin) {
         this.plugin = plugin;
         loadFile();
     }
 
     private void loadFile() {
-        file = new File(plugin.getDataFolder(), "clocks.yml");
+        file = new File(plugin.getDataFolder(), "settings/clocks.yml");
+        if (!file.exists()) {
+            plugin.safeSaveResource("settings/clocks.yml");
+        }
         config = YamlConfiguration.loadConfiguration(file);
         reloadTimesFromConfig();
     }
 
     public void reload() {
         loadFile();
+    }
+
+    public FileConfiguration getConfig() {
+        return config;
+    }
+
+    public void saveConfig() {
+        try {
+            if (config != null && file != null) {
+                config.save(file);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public void reloadTimesFromConfig() {
@@ -47,13 +68,13 @@ public class PrayerTimeManager {
         prayerTimes.put("Yatsi", config.getString("Yatsi", "21:15"));
     }
 
-    public Map<String, String> getPrayerTimes() {
-        return prayerTimes;
-    }
+    public Map<String, String> getPrayerTimes() { return prayerTimes; }
+    public String getNextPrayerName() { return nextPrayerName; }
+    public String getCountdownFormatted() { return countdownFormatted; }
 
     public void startTasks() {
         Bukkit.getScheduler().runTaskTimerAsynchronously(plugin, () -> {
-            boolean fetched = IstanbulPrayerAPI.fetchAndSave(file, config);
+            boolean fetched = IstanbulPrayerAPI.fetchAndSave(plugin);
             if (fetched) reloadTimesFromConfig();
         }, 0L, 20L * 60 * 60 * 24);
 
@@ -61,16 +82,22 @@ public class PrayerTimeManager {
             LocalTime now = LocalTime.now(ZoneId.of("Europe/Istanbul"));
             int currentTotalMin = now.getHour() * 60 + now.getMinute();
 
+            int minDiff = Integer.MAX_VALUE;
+            String upcoming = "İmsak";
+
             for (Map.Entry<String, String> entry : prayerTimes.entrySet()) {
                 String vakitName = entry.getKey();
-                String displayName = plugin.getConfig().getString("NamazIsimleri." + vakitName, vakitName);
+                String displayName = plugin.getMessagesConfig().getString("NamazIsimleri." + vakitName, vakitName);
                 String timeStr = entry.getValue();
                 String[] split = timeStr.split(":");
-                int targetHour = Integer.parseInt(split[0]);
-                int targetMin = Integer.parseInt(split[1]);
-                int targetTotalMin = targetHour * 60 + targetMin;
+                int targetTotalMin = Integer.parseInt(split[0]) * 60 + Integer.parseInt(split[1]);
 
                 int fark = targetTotalMin - currentTotalMin;
+
+                if (fark > 0 && fark < minDiff) {
+                    minDiff = fark;
+                    upcoming = displayName;
+                }
 
                 if (fark == 5 || fark == 3 || fark == 1) {
                     String cacheKey = vakitName + "-" + fark;
@@ -83,19 +110,40 @@ public class PrayerTimeManager {
                         lastEzanCache = vakitName;
                         plugin.getRedisManager().publishEzan(displayName);
 
-                        int delay = plugin.getConfig().getInt("Settings.RewardDelaySeconds", 5);
+                        int delay = plugin.getConfig().getInt("Settings.Others.Reward-Delay-Seconds", 5);
                         Bukkit.getScheduler().runTaskLater(plugin, () -> {
                             plugin.getRewardManager().distributeRewards(displayName);
                         }, delay * 20L);
                     }
                 }
             }
-        }, 20L, 20L * 60);
+
+            if (minDiff != Integer.MAX_VALUE) {
+                this.nextPrayerName = upcoming;
+                int hoursLeft = minDiff / 60;
+                int minsLeft = (minDiff % 60) - 1;
+                int secsLeft = 60 - now.getSecond();
+                if (secsLeft == 60) { secsLeft = 0; minsLeft += 1; }
+                if (minsLeft < 0) { minsLeft = 0; hoursLeft = 0; }
+                this.countdownFormatted = String.format("%02d:%02d:%02d", hoursLeft, minsLeft, secsLeft);
+            } else {
+                this.nextPrayerName = plugin.getMessagesConfig().getString("NamazIsimleri.Imsak", "İmsak");
+                String[] split = prayerTimes.getOrDefault("Imsak", "05:30").split(":");
+                int imsakTotalMin = Integer.parseInt(split[0]) * 60 + Integer.parseInt(split[1]);
+                int fark = (24 * 60 - currentTotalMin) + imsakTotalMin;
+                int hoursLeft = fark / 60;
+                int minsLeft = (fark % 60) - 1;
+                int secsLeft = 60 - now.getSecond();
+                if (secsLeft == 60) { secsLeft = 0; minsLeft += 1; }
+                this.countdownFormatted = String.format("%02d:%02d:%02d", hoursLeft, minsLeft, secsLeft);
+            }
+
+        }, 20L, 20L);
     }
 
     public void triggerEzanTest(String vakitNameRaw, String displayName) {
         plugin.getRedisManager().publishEzan(displayName);
-        int delay = plugin.getConfig().getInt("Settings.RewardDelaySeconds", 5);
+        int delay = plugin.getConfig().getInt("Settings.Others.Reward-Delay-Seconds", 5);
         Bukkit.getScheduler().runTaskLater(plugin, () -> {
             plugin.getRewardManager().distributeRewards(displayName);
         }, delay * 20L);

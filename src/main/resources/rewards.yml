@@ -1,4 +1,23 @@
-# src/main/resources/rewards.yml
 Rewards:
-  - "eco give {PLAYER} 1000"
-  - "give {PLAYER} diamond 1"
+  - "eco give {PLAYER} 150"
+
+monthly-rewards:
+  command: "/namazödülüm"
+  no-reward-message: "&#e74c3c✖ Hesabınıza tanımlanmış bir namaz ödülü bulunmamaktadır!"
+  reward-claimed-message: "&#27ae60✔ Tebrikler! Aylık namaz sıralaması ödülünüz başarıyla hesabınıza tanımlandı."
+  tops:
+    top1:
+      minimum-namaz: 5
+      commands:
+        - "eco give {PLAYER} 100000"
+        - "give {PLAYER} diamond_block 64"
+    top2:
+      minimum-namaz: 5
+      commands:
+        - "eco give {PLAYER} 50000"
+        - "give {PLAYER} diamond_block 32"
+    top3:
+      minimum-namaz: 5
+      commands:
+        - "eco give {PLAYER} 25000"
+        - "give {PLAYER} diamond_block 16"
