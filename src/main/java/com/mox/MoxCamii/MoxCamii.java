@@ -27,7 +27,7 @@ public class MoxCamii extends JavaPlugin {
     private PrayerTimeManager prayerTimeManager;
     private GuiManager guiManager;
     private SoundManager soundManager;
-    private PermissionManager permissionManager; // EKLENDİ
+    private PermissionManager permissionManager;
 
     private FileConfiguration messagesConfig;
     private File messagesFile;
@@ -48,7 +48,7 @@ public class MoxCamii extends JavaPlugin {
         safeSaveResource("settings/special_clocks.yml");
         safeSaveResource("settings/rewards.yml");
         safeSaveResource("settings/sounds.yml");
-        safeSaveResource("settings/permissions.yml"); // EKLENDİ
+        safeSaveResource("settings/permissions.yml");
         safeSaveResource("menus/clocks.yml");
         safeSaveResource("menus/special_clocks.yml");
         safeSaveResource("menus/own-info.yml");
@@ -56,7 +56,7 @@ public class MoxCamii extends JavaPlugin {
         safeSaveResource("menus/ban-list.yml");
         safeSaveResource("menus/confirm.yml");
 
-        this.permissionManager = new PermissionManager(this); // EKLENDİ
+        this.permissionManager = new PermissionManager(this);
         this.soundManager = new SoundManager(this);
         this.databaseManager = new DatabaseManager(this);
         this.regionManager = new RegionManager(this);
@@ -73,7 +73,6 @@ public class MoxCamii extends JavaPlugin {
 
         getCommand("cami").setExecutor(new CamiCommand(this));
         getCommand("camiadmin").setExecutor(new CamiAdminCommand(this));
-        getCommand("namazödülüm").setExecutor(new NamazOdulumCommand(this));
 
         Bukkit.getPluginManager().registerEvents(new PlayerInteractListener(this), this);
         Bukkit.getPluginManager().registerEvents(new PlayerMoveListener(this), this);
@@ -109,7 +108,7 @@ public class MoxCamii extends JavaPlugin {
         reloadConfig();
         this.messagesConfig = null;
         this.specialClocksConfig = null;
-        this.permissionManager.loadFile(); // EKLENDİ
+        this.permissionManager.loadFile();
         this.soundManager.loadFile();
         this.databaseManager.reload();
         this.regionManager.reload();
@@ -166,5 +165,5 @@ public class MoxCamii extends JavaPlugin {
     public PrayerTimeManager getPrayerTimeManager() { return prayerTimeManager; }
     public GuiManager getGuiManager() { return guiManager; }
     public SoundManager getSoundManager() { return soundManager; }
-    public PermissionManager getPermissionManager() { return permissionManager; } // EKLENDİ
+    public PermissionManager getPermissionManager() { return permissionManager; }
 }

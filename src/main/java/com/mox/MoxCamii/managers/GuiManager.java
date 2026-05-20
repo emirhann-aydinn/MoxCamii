@@ -33,7 +33,6 @@ public class GuiManager {
     public void reload() {
         configs.clear();
         resolvedTitles.clear();
-        // EKSİK OLAN "special_clocks" BURAYA EKLENDİ
         String[] menus = {"clocks", "special_clocks", "own-info", "top", "ban-list", "confirm"};
         for (String m : menus) {
             File file = new File(plugin.getDataFolder(), "menus/" + m + ".yml");
@@ -107,7 +106,6 @@ public class GuiManager {
         p.openInventory(inv);
     }
 
-    // EKSİK OLAN ÖZEL NAMAZLAR MENÜSÜ METODU EKLENDİ
     public void openSpecialVakitlerGUI(Player p) {
         FileConfiguration cfg = configs.get("special_clocks");
         if (cfg == null) {
@@ -171,6 +169,15 @@ public class GuiManager {
 
         Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
             OfflinePlayer target = Bukkit.getOfflinePlayer(targetName);
+
+            // Kullanıcı veritabanında yoksa işlem durur, boş menü açılmaz
+            if (!plugin.getDatabaseManager().hasData(target.getUniqueId()) && !target.hasPlayedBefore() && !target.isOnline()) {
+                Bukkit.getScheduler().runTask(plugin, () -> {
+                    p.sendMessage(ColorUtils.color(plugin.getConfig().getString("Settings.Prefix", "") + plugin.getMessagesConfig().getString("Messages.PlayerNotFound", "&c✖ Bu oyuncu bulunamadı veya hiç verisi yok.")));
+                });
+                return;
+            }
+
             Map<String, Integer> stats = plugin.getDatabaseManager().getAllStats(target.getUniqueId());
             String lastPrayer = plugin.getDatabaseManager().getLastPrayer(target.getUniqueId());
             int rank = plugin.getDatabaseManager().getRank(target.getUniqueId(), false);
@@ -257,7 +264,7 @@ public class GuiManager {
             List<Map.Entry<String, Integer>> topList = plugin.getDatabaseManager().getTop10(sortType);
 
             Bukkit.getScheduler().runTask(plugin, () -> {
-                Inventory inv = Bukkit.createInventory(null, cfg.getInt("size", 45), ColorUtils.color(cfg.getString("title", "").replace("{SORT}", sortName)));
+                Inventory inv = Bukkit.createInventory(null, cfg.getInt("size", 45), ColorUtils.color(cfg.getString("title", "&8Sıralama: {SORT}").replace("{SORT}", sortName)));
                 List<String> pattern = cfg.getStringList("pattern");
                 int slot = 0, topIdx = 0;
 
@@ -265,6 +272,7 @@ public class GuiManager {
                     String[] elements = row.split(" ");
                     for (String e : elements) {
                         if (slot >= inv.getSize()) break;
+
                         if (e.equals("#")) {
                             inv.setItem(slot, buildItem(cfg, "#"));
                         } else if (e.equals("M")) {
@@ -279,35 +287,28 @@ public class GuiManager {
                                 hopper.setItemMeta(hm);
                             }
                             inv.setItem(slot, hopper);
-                        } else if (!e.equals("#") && !e.equals("M") && !e.equals("S")) {
+                        } else if (e.equals("X")) {
                             if (topIdx < topList.size()) {
                                 Map.Entry<String, Integer> entry = topList.get(topIdx);
-
                                 ItemStack head = buildItem(cfg, "X");
                                 if(head == null || head.getType() == Material.AIR) head = new ItemStack(Material.PLAYER_HEAD);
 
                                 ItemMeta sm = head.getItemMeta();
-                                if (sm instanceof SkullMeta) {
-                                    ((SkullMeta) sm).setOwningPlayer(Bukkit.getOfflinePlayer(entry.getKey()));
-                                }
+                                if (sm instanceof SkullMeta) ((SkullMeta) sm).setOwningPlayer(Bukkit.getOfflinePlayer(entry.getKey()));
 
                                 String pName = entry.getKey();
                                 String score = String.valueOf(entry.getValue());
                                 String rank = String.valueOf(topIdx + 1);
 
                                 if (sm != null) {
-                                    if (sm.getDisplayName() == null || sm.getDisplayName().isEmpty()) {
-                                        sm.setDisplayName(ColorUtils.color("&#f1c40f#" + rank + " &#27ae60" + pName));
-                                    } else {
-                                        sm.setDisplayName(ColorUtils.color(sm.getDisplayName().replace("{RANK}", rank).replace("{PLAYER}", pName).replace("{SCORE}", score)));
-                                    }
-
-                                    if (sm.getLore() != null) {
-                                        List<String> l = sm.getLore();
+                                    sm.setDisplayName(ColorUtils.color(sm.getDisplayName()
+                                            .replace("{RANK}", rank)
+                                            .replace("{PLAYER}", pName)
+                                            .replace("{SCORE}", score)));
+                                    List<String> l = sm.getLore();
+                                    if(l != null) {
                                         l.replaceAll(s -> ColorUtils.color(s.replace("{RANK}", rank).replace("{PLAYER}", pName).replace("{SCORE}", score)));
                                         sm.setLore(l);
-                                    } else {
-                                        sm.setLore(Collections.singletonList(ColorUtils.color("&7Skor: &f" + score)));
                                     }
                                     head.setItemMeta(sm);
                                 }
@@ -315,10 +316,7 @@ public class GuiManager {
                             } else {
                                 ItemStack empty = new ItemStack(Material.BARRIER);
                                 ItemMeta em = empty.getItemMeta();
-                                if (em != null) {
-                                    em.setDisplayName(ColorUtils.color("&cBoş"));
-                                    empty.setItemMeta(em);
-                                }
+                                if (em != null) { em.setDisplayName(ColorUtils.color("&cBoş")); empty.setItemMeta(em); }
                                 inv.setItem(slot, empty);
                             }
                             topIdx++;

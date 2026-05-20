@@ -229,14 +229,25 @@ public class CamiAdminCommand implements CommandExecutor {
                 sender.sendMessage(prefix + ColorUtils.color(plugin.getMessagesConfig().getString("Messages.TestUsage", "&#e74c3c✖ Kullanım: /camiadmin test <vakit>")));
                 return true;
             }
+
+            String vakitRaw = args[1].toLowerCase(new java.util.Locale("tr", "TR"));
+            if (!vakitRaw.matches("^(imsak|gunes|güneş|ogle|öğle|ikindi|aksam|akşam|yatsi|yatsı|teravih|ramazan-bayram|kurban-bayram)$")) {
+                sender.sendMessage(prefix + ColorUtils.color("&#e74c3c✖ Sadece mevcut namazları test edebilirsiniz. (imsak, gunes, ogle, ikindi, aksam, yatsi, teravih vb.)"));
+                return true;
+            }
+
             String vakit = args[1];
+            if(vakit.equalsIgnoreCase("güneş")) vakit = "Gunes";
+            if(vakit.equalsIgnoreCase("öğle")) vakit = "Ogle";
+            if(vakit.equalsIgnoreCase("akşam")) vakit = "Aksam";
+            if(vakit.equalsIgnoreCase("yatsı")) vakit = "Yatsi";
+
             String displayName = plugin.getMessagesConfig().getString("Namaz-Names." + vakit, vakit);
             plugin.getPrayerTimeManager().triggerEzanTest(vakit, displayName);
             sender.sendMessage(prefix + ColorUtils.color(plugin.getMessagesConfig().getString("Messages.TestTriggered", "&#2980b9✔ Test ezanı tetiklendi.").replace("{VAKIT}", displayName)));
             return true;
         }
 
-        // --- YENİ EKLENEN SEZON BİTİRME KOMUTU ---
         if (subCmd.equalsIgnoreCase("sezon") && checkPerm(sender, "moxcamii.admin.sezon")) {
             if (args.length < 2 || !args[1].equalsIgnoreCase("bitir")) {
                 sender.sendMessage(prefix + ColorUtils.color(plugin.getMessagesConfig().getString("Messages.SezonUsage", "&#e74c3c✖ Kullanım: /camiadmin sezon bitir")));

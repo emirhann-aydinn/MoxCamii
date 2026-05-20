@@ -4,11 +4,13 @@ import com.mox.MoxCamii.MoxCamii;
 import com.mox.MoxCamii.utils.ColorUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
 
 import java.io.File;
@@ -49,29 +51,47 @@ public class RewardManager {
         String prefix = ColorUtils.color(plugin.getConfig().getString("Settings.Prefix", ""));
         String rewardMsg = plugin.getMessagesConfig().getString("Messages.RewardGiven");
         String notSittingMsg = plugin.getMessagesConfig().getString("Messages.NotSitting");
-        List<String> rewards = config.getStringList("Rewards");
 
         for (Player p : Bukkit.getOnlinePlayers()) {
-            Location checkLoc = p.getLocation().clone().add(0, 1.5, 0);
-            boolean inRegion = plugin.getRegionManager().isInRegion(checkLoc);
-            if (!inRegion) continue;
-
             if (isSitting(p)) {
                 plugin.getDatabaseManager().recordPrayer(p.getUniqueId(), p.getName(), rawName);
                 if (rewardMsg != null) p.sendMessage(prefix + ColorUtils.color(rewardMsg.replace("{VAKIT}", displayName)));
                 if (plugin.getSoundManager() != null) plugin.getSoundManager().playSound(p, "Reward");
 
-                for (String cmd : rewards) {
-                    cmd = cmd.replace("{PLAYER}", p.getName()).replace("{VAKIT}", displayName);
-                    Bukkit.dispatchCommand(Bukkit.getConsoleSender(), cmd);
+                if (config.getBoolean("Rewards.Commands.Enabled", false)) {
+                    List<String> cmds = config.getStringList("Rewards.Commands.List");
+                    for (String cmd : cmds) {
+                        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), cmd.replace("{PLAYER}", p.getName()).replace("{VAKIT}", displayName));
+                    }
+                }
+
+                if (config.getBoolean("Rewards.Items.Enabled", false)) {
+                    List<String> items = config.getStringList("Rewards.Items.List");
+                    for (String itemStr : items) {
+                        try {
+                            String[] parts = itemStr.split(":");
+                            Material mat = Material.matchMaterial(parts[0].toUpperCase());
+                            int amount = parts.length > 1 ? Integer.parseInt(parts[1]) : 1;
+
+                            if (mat != null && mat != Material.AIR) {
+                                p.getInventory().addItem(new ItemStack(mat, amount));
+                            } else {
+                                plugin.getLogger().warning("Gecersiz esya turu: " + parts[0]);
+                            }
+                        } catch (Exception e) {
+                            plugin.getLogger().warning("Esya verilirken hata olustu: " + itemStr);
+                        }
+                    }
                 }
             } else {
-                if (notSittingMsg != null) p.sendMessage(prefix + ColorUtils.color(notSittingMsg));
+                Location checkLoc = p.getLocation().clone().add(0, 1.5, 0);
+                if (plugin.getRegionManager().isInRegion(checkLoc)) {
+                    if (notSittingMsg != null) p.sendMessage(prefix + ColorUtils.color(notSittingMsg));
+                }
             }
         }
     }
 
-    // Aylık ödülleri hesaplayan ve dağıtılmak üzere askıya alan ana metot
     private void processMonthlyRewards() {
         List<Map.Entry<String, Integer>> top = plugin.getDatabaseManager().getTop10("monthly_count");
 
@@ -88,9 +108,8 @@ public class RewardManager {
         plugin.getDatabaseManager().resetMonthlyStats();
     }
 
-    // /camiadmin sezon bitir komutuyla tetiklenir
     public void forceEndSeason() {
-        processMonthlyRewards();
+        Bukkit.getScheduler().runTaskAsynchronously(plugin, this::processMonthlyRewards);
     }
 
     private void startMonthlyTask() {

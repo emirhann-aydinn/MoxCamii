@@ -92,7 +92,7 @@ Commands:
     - "  &#f1c40f/cami sorgu [oyuncu] &7- Cami kayıtlarını gösterir."
     - "  &#f1c40f/cami vakitler &7- Namaz vakitlerini gösterir."
     - "  &#f1c40f/cami top &7- Aylık/Toplam namaz sıralamasını gösterir."
-    - "  &#f1c40f/namazödülüm &7- Sıralamaya girdiyseniz ödülünüzü alırsınız."
+    - "  &#f1c40f/cami ödül &7- Sıralamaya girdiyseniz ödülünüzü alırsınız."
     - "&8&m----------------------------------------"
 
   AdminHelp:

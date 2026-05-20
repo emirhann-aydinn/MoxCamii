@@ -67,6 +67,11 @@ public class PrayerTimeManager {
         }, 0L, 20L * 60 * 60 * 24);
 
         Bukkit.getScheduler().runTaskTimer(plugin, () -> {
+            // Eğer Cami ve Kapı alanları daha seçilmemişse namazları / ezanı hiç başlatma.
+            if (!plugin.getRegionManager().hasCamiRegion() || !plugin.getRegionManager().hasDoorRegion()) {
+                return;
+            }
+
             LocalTime now = LocalTime.now(ZoneId.of("Europe/Istanbul"));
             int currentTotalMin = now.getHour() * 60 + now.getMinute();
 
@@ -99,7 +104,7 @@ public class PrayerTimeManager {
                     if (!lastEzanCache.equals(vakitName)) {
                         lastEzanCache = vakitName;
                         plugin.getRedisManager().publishEzan(displayName);
-                        plugin.getSoundManager().playSound(null, "Ezan");
+                        if (plugin.getSoundManager() != null) plugin.getSoundManager().playSound(null, "Ezan");
 
                         int delay = plugin.getConfig().getInt("Settings.Others.Reward-Delay-Seconds", 5);
                         Bukkit.getScheduler().runTaskLater(plugin, () -> {
@@ -136,7 +141,7 @@ public class PrayerTimeManager {
 
     public void triggerEzanTest(String vakitNameRaw, String displayName) {
         plugin.getRedisManager().publishEzan(displayName);
-        plugin.getSoundManager().playSound(null, "Ezan");
+        if (plugin.getSoundManager() != null) plugin.getSoundManager().playSound(null, "Ezan");
         int delay = plugin.getConfig().getInt("Settings.Others.Reward-Delay-Seconds", 5);
         Bukkit.getScheduler().runTaskLater(plugin, () -> {
             plugin.getRewardManager().distributeRewards(vakitNameRaw, displayName);

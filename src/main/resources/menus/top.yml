@@ -1,7 +1,7 @@
 title: "&#27ae60⛫ &8Sıralama: {SORT}"
 size: 45
 pattern:
-  - "# # # # M # # # #"
+  - "# # # # # # # # #"
   - "# # X X X X X # #"
   - "# # X X X X X # #"
   - "# # # # # # # # #"
@@ -21,7 +21,7 @@ items:
     material: HOPPER
     name: "&eSıralama Türünü Değiştir"
     lore:
-      -  "
+      - ""
       - "&8Sıralama Türleri:"
       - "&f- Toplam Namaz"
       - "&f- Aylık Namaz"

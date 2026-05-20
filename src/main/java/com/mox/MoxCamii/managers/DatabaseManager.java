@@ -171,8 +171,16 @@ public class DatabaseManager {
         String prefix = plugin.getConfig().getString("Settings.Database.Table-Prefix", "moxcamii_");
         Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
             try (Connection conn = dataSource.getConnection()) {
-                String typeCol = prayerNameRaw.toLowerCase().replace("ı", "i").replace("ş", "s").replace("ö", "o");
-                if (!typeCol.matches("^(imsak|gunes|ogle|ikindi|aksam|yatsi|teravih|bayram)$")) typeCol = "total_count";
+                String cleanName = org.bukkit.ChatColor.stripColor(com.mox.MoxCamii.utils.ColorUtils.color(prayerNameRaw)).toLowerCase(new java.util.Locale("tr", "TR"));
+                String typeCol = "total_count";
+                if (cleanName.contains("imsak")) typeCol = "imsak";
+                else if (cleanName.contains("güneş") || cleanName.contains("gunes")) typeCol = "gunes";
+                else if (cleanName.contains("öğle") || cleanName.contains("ogle")) typeCol = "ogle";
+                else if (cleanName.contains("ikindi")) typeCol = "ikindi";
+                else if (cleanName.contains("akşam") || cleanName.contains("aksam")) typeCol = "aksam";
+                else if (cleanName.contains("yatsı") || cleanName.contains("yatsi")) typeCol = "yatsi";
+                else if (cleanName.contains("teravih")) typeCol = "teravih";
+                else if (cleanName.contains("bayram")) typeCol = "bayram";
 
                 String sql = plugin.getConfig().getString("Settings.Database.Type").equalsIgnoreCase("MySQL")
                         ? "INSERT INTO " + prefix + "users (uuid, name, " + typeCol + ", monthly_count, total_count, last_prayer) VALUES (?, ?, 1, 1, 1, ?) ON DUPLICATE KEY UPDATE " + typeCol + " = " + typeCol + " + 1, monthly_count = monthly_count + 1, total_count = total_count + 1, last_prayer = ?"
@@ -189,14 +197,19 @@ public class DatabaseManager {
         });
     }
 
-    public List<Map.Entry<String, Integer>> getTop10(String columnName) {
+    public List<Map.Entry<String, Integer>> getTop10(String sortType) {
         String prefix = plugin.getConfig().getString("Settings.Database.Table-Prefix", "moxcamii_");
         List<Map.Entry<String, Integer>> list = new ArrayList<>();
+
+        String col = "total_count";
+        if (sortType.equalsIgnoreCase("monthly_count")) col = "monthly_count";
+        else if (sortType.equalsIgnoreCase("abdest_count")) col = "abdest_count";
+
         try (Connection conn = dataSource.getConnection();
-             PreparedStatement ps = conn.prepareStatement("SELECT name, " + columnName + " FROM " + prefix + "users ORDER BY " + columnName + " DESC LIMIT 10")) {
+             PreparedStatement ps = conn.prepareStatement("SELECT name, " + col + " FROM " + prefix + "users ORDER BY " + col + " DESC LIMIT 10")) {
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
-                list.add(new AbstractMap.SimpleEntry<>(rs.getString("name"), rs.getInt(columnName)));
+                list.add(new AbstractMap.SimpleEntry<>(rs.getString("name"), rs.getInt(col)));
             }
         } catch (SQLException e) { e.printStackTrace(); }
         return list;
